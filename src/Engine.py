@@ -1,5 +1,7 @@
-class Engine:
+from threading import Thread, Lock
+class Engine(Thread):
     def __init__(self, id):
+        Thread.__init__(self)
         self.ID = id
         self.ShouldClose = False
 
@@ -23,27 +25,41 @@ class Engine:
 
         self.CLOutput = 0.0
 
+    def run(self):
+       self.RunClosedLoop()
+
+    def Close(self):
+        mutex = Lock()
+        mutex.acquire()
+        self.ShouldClose = True
+        mutex.release()
+
     def RunOpenLoop(self):
-        self.RunSetpoint()
-        self.previousOutput_2 = self.previousOutput
-        self.previousOutput = self.Output
-        self.previousInput_2 = self.previousInput
-        self.previousInput = self.InputVoltage
+        while(not self.ShouldClose):
+            self.RunSetpoint()
+            self.previousOutput_2 = self.previousOutput
+            self.previousOutput = self.Output
+            self.previousInput_2 = self.previousInput
+            self.previousInput = self.InputVoltage
 
     def RunClosedLoop(self):
-        self.RunControllerSetpoint()
-        self.closedLoopPreviousOutput_4 = self.closedLoopPreviousOutput_3
-        self.closedLoopPreviousOutput_3 = self.closedLoopPreviousOutput_2
-        self.closedLoopPreviousOutput_2 = self.closedLoopPreviousOutput
-        self.closedLoopPreviousOutput = self.CLOutput
+        while(not self.ShouldClose):
+            self.RunControllerSetpoint()
+            self.closedLoopPreviousOutput_4 = self.closedLoopPreviousOutput_3
+            self.closedLoopPreviousOutput_3 = self.closedLoopPreviousOutput_2
+            self.closedLoopPreviousOutput_2 = self.closedLoopPreviousOutput
+            self.closedLoopPreviousOutput = self.CLOutput
 
-        self.closedLoopPreviousInput_4 = self.closedLoopPreviousInput_3
-        self.closedLoopPreviousInput_3 = self.closedLoopPreviousInput_2
-        self.closedLoopPreviousInput_2 = self.closedLoopPreviousInput
-        self.closedLoopPreviousInput = self.InputVoltage
+            self.closedLoopPreviousInput_4 = self.closedLoopPreviousInput_3
+            self.closedLoopPreviousInput_3 = self.closedLoopPreviousInput_2
+            self.closedLoopPreviousInput_2 = self.closedLoopPreviousInput
+            self.closedLoopPreviousInput = self.InputVoltage
 
     def SetOperationPoint(self, setpoint):
+        mutex = Lock()
+        mutex.acquire()
         self.InputVoltage = setpoint
+        mutex.release()
 
     def GetCurrentOutput(self):
         return (self.Output, self.CLOutput)
