@@ -35,6 +35,11 @@ class Controller(Thread):
             e.join()
             
     def SetOperationPoint(self, setpoint):
+        self.Setpoint = setpoint
+    
+    def Close(self):
+        self.ShouldClose = True
         for e in self.Engines:
-            e.SetOperationPoint(setpoint)
+            e.Close()
+            e.join()
    

@@ -1,9 +1,10 @@
-from Controller import Controller
+from ThreadPool import ThreadPool
+from time import sleep
 
 def main():
-    c = Controller()
-    c.start()
-    c.Run()
-    
+    t = ThreadPool()
+    t.start()
+    sleep(7)
+    t.Stop()
 
 main()
