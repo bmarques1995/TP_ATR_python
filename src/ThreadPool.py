@@ -1,5 +1,6 @@
 from Controller import Controller
 from Logger import Logger
+from CLI import CLI
 from threading import Thread, Lock
 
 class ThreadPool(Thread):
@@ -10,11 +11,15 @@ class ThreadPool(Thread):
         self.Controller.start()
         self.Logger = Logger(self.Controller.GetEngines())
         self.Logger.start()
+        self.CLI = CLI(self.Controller)
+        self.CLI.start()
 
     def run(self):
         pass
 
     def Stop(self):
+        self.CLI.Close()
+        self.CLI.join()
         self.Logger.Close()
         self.Logger.join()
         self.Controller.Close()

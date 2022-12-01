@@ -1,10 +1,15 @@
 from ThreadPool import ThreadPool
 from time import sleep
+from os import fork
 
 def main():
-    t = ThreadPool()
-    t.start()
-    sleep(7)
-    t.Stop()
+    newpid = fork()
+    if newpid == 0:
+        print("Fork")
+    else:
+        t = ThreadPool()
+        t.start()
+        sleep(90)
+        t.Stop()
 
 main()
