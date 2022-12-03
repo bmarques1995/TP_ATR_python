@@ -5,9 +5,12 @@ from os import fork
 def main():
     newpid = fork()
     if newpid == 0:
-        print("Fork")
+        t = ThreadPool(True)
+        t.start()
+        sleep(90)
+        t.Stop()
     else:
-        t = ThreadPool()
+        t = ThreadPool(False)
         t.start()
         sleep(90)
         t.Stop()
